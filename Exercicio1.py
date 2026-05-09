@@ -427,7 +427,7 @@ erro_cholesky = erro_relativo(x_cholesky, x_referencia)
 erro_referencia = erro_relativo(x_referencia, x_referencia)
 
 imprimir_resumo_metodos(
-    "Resumo dos métodos diretos",
+    "Comparação entre métodos diretos",
     [
         ("Fatoração LU", None, res_lu, erro_lu),
         ("Fatoração de Cholesky", None, res_cholesky, erro_cholesky),
@@ -460,7 +460,7 @@ erro_gs = erro_relativo(x_gs, x_referencia)
 erro_cg = erro_relativo(x_cg, x_referencia)
 
 imprimir_resumo_metodos(
-    "Resumo dos métodos iterativos",
+    "Comparação entre métodos iterativos",
     [
         ("Jacobi", it_jacobi, res_jacobi, erro_jacobi),
         ("Gauss-Seidel", it_gs, res_gs, erro_gs),
