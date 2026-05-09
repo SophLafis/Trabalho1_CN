@@ -171,38 +171,95 @@ def imprimir_polinomio_grau2(x_local, coeficientes, valor_alvo):
 
 def gerar_grafico(t, y, x_local, coeficientes, valor_alvo, valor_estimado):
     """
-    Gera um gráfico dos dados do projétil e do polinômio local escolhido.
+    Gera um gráfico dos dados do projétil, do polinômio local de grau 2
+    e do polinômio local de grau 3 usado apenas para comparação.
     """
+    # ----------------------------
+    # Polinômio de grau 2
+    # ----------------------------
     a0, a1, a2 = coeficientes
     x0, x1, x2 = x_local
 
-    t_plot = np.linspace(3.5, 6.5, 300)
+    t_plot_grau2 = np.linspace(x0, x2, 300)
 
     p2_plot = (
         a0
-        + a1 * (t_plot - x0)
-        + a2 * (t_plot - x0) * (t_plot - x1)
+        + a1 * (t_plot_grau2 - x0)
+        + a2 * (t_plot_grau2 - x0) * (t_plot_grau2 - x1)
     )
 
+    # ----------------------------
+    # Polinômio de grau 3
+    # ----------------------------
+    x_local_grau3 = np.array([5, 6, 7, 8], dtype=float)
+    y_local_grau3 = np.array([4.93, 5.23, 5.38, 5.43], dtype=float)
+
+    tabela_grau3 = diferencas_divididas(x_local_grau3, y_local_grau3)
+
+    t_plot_grau3 = np.linspace(x_local_grau3[0], x_local_grau3[-1], 300)
+
+    p3_plot = np.array([
+        avaliar_newton(
+            x_pontos=x_local_grau3,
+            tabela=tabela_grau3,
+            valor=ti,
+            grau=3
+        )
+        for ti in t_plot_grau3
+    ])
+
+    valor_estimado_grau3 = avaliar_newton(
+        x_pontos=x_local_grau3,
+        tabela=tabela_grau3,
+        valor=valor_alvo,
+        grau=3
+    )
+
+    diferenca = abs(valor_estimado_grau3 - valor_estimado)
+
+    # ----------------------------
+    # Construção do gráfico
+    # ----------------------------
     plt.figure(figsize=(9, 5.5))
 
     plt.plot(t, y, "o", label="Dados observados")
-    plt.plot(t_plot, p2_plot, "-", label="Polinômio interpolador de grau 2")
-    plt.plot(valor_alvo, valor_estimado, "s", markersize=8, label=f"Estimativa em t = {valor_alvo}")
+    plt.plot(t_plot_grau2, p2_plot, "-", label="Polinômio interpolador de grau 2")
+    plt.plot(t_plot_grau3, p3_plot, "--", label="Polinômio interpolador de grau 3")
 
-    plt.title("Estimativa da altura do projétil por interpolação de Newton")
+    plt.plot(
+        valor_alvo,
+        valor_estimado,
+        "s",
+        markersize=8,
+        label=f"Estimativa grau 2: {valor_estimado:.5f} m"
+    )
+
+    plt.plot(
+        valor_alvo,
+        valor_estimado_grau3,
+        "^",
+        markersize=8,
+        label=f"Estimativa grau 3: {valor_estimado_grau3:.5f} m"
+    )
+
+    plt.axvline(valor_alvo, linestyle=":", linewidth=1)
+
+    plt.title("Comparação entre interpolações locais de grau 2 e grau 3")
     plt.xlabel("Tempo t (s)")
     plt.ylabel("Altura y(t) (m)")
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
 
-    nome_arquivo = "projetil_interpolacao_newton.eps"
+    nome_arquivo = "projetil_interpolacao_newton_grau2_grau3.eps"
     plt.savefig(nome_arquivo, format="eps")
     plt.show()
 
     print(f"\nGráfico salvo como: {nome_arquivo}")
-
+    print("\nComparação das estimativas:")
+    print(f"p2({valor_alvo:.1f}) = {valor_estimado:.10f} m")
+    print(f"p3({valor_alvo:.1f}) = {valor_estimado_grau3:.10f} m")
+    print(f"Diferença absoluta = {diferenca:.10f} m")
 
 # ============================================================
 # EXECUÇÃO DO EXERCÍCIO 4
