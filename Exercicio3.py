@@ -205,15 +205,37 @@ def gerar_grafico(n, x_pontos, y_pontos, x_plot, y_real, y_newton, y_linear, y_c
     plt.xlabel("x")
     plt.ylabel("y")
     plt.grid(True)
-    plt.legend()
+    plt.legend(framealpha=1)
     plt.tight_layout()
 
     nome_arquivo = f"runge_n_{n}.eps"
     plt.savefig(nome_arquivo, format="eps")
     plt.show()
 
-    print(f"Gráfico salvo como: {nome_arquivo}")
+def gerar_grafico_erros(n, z, y_real_z, y_newton_z, y_linear_z, y_cubica_z):
+    """
+    Gera e salva o gráfico dos erros absolutos nos pontos z_i.
+    """
+    erro_newton = np.abs(y_real_z - y_newton_z)
+    erro_linear = np.abs(y_real_z - y_linear_z)
+    erro_cubica = np.abs(y_real_z - y_cubica_z)
 
+    plt.figure(figsize=(9, 5.5))
+
+    plt.plot(z, erro_newton, "--o", markersize=3, label=f"Erro Newton p_{n}(z)")
+    plt.plot(z, erro_linear, "-.s", markersize=3, label="Erro spline linear S1(z)")
+    plt.plot(z, erro_cubica, ":^", markersize=3, label="Erro spline cúbica S3(z)")
+
+    plt.title(f"Erros absolutos nos pontos z_i para n = {n}")
+    plt.xlabel("z_i")
+    plt.ylabel("Erro absoluto")
+    plt.grid(True)
+    plt.legend(framealpha=1)
+    plt.tight_layout()
+
+    nome_arquivo = f"runge_erros_n_{n}.eps"
+    plt.savefig(nome_arquivo, format="eps")
+    plt.show()
 
 # ============================================================
 # EXECUÇÃO DO EXERCÍCIO 3
@@ -282,6 +304,15 @@ for n in valores_n:
         y_newton=y_newton_plot,
         y_linear=y_linear_plot,
         y_cubica=y_cubica_plot
+    )
+
+    gerar_grafico_erros(
+    n=n,
+    z=z,
+    y_real_z=y_real_z,
+    y_newton_z=y_newton_z,
+    y_linear_z=y_linear_z,
+    y_cubica_z=y_cubica_z
     )
 
 
